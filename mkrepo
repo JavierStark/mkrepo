@@ -5,6 +5,7 @@ if [ "$FLAG" == "--existing" ]; then
     git init
     git add .
     git commit -m "Initial commit"
+    git branch -M main
 
     gh repo create $NAME --public
     USERNAME=$(gh api user | jq -r .login)
@@ -12,13 +13,11 @@ if [ "$FLAG" == "--existing" ]; then
     git remote add origin https://github.com/$USERNAME/$NAME.git
     git push -u origin master
 else
-    if [ -z "$(ls -A .)" ]; then
-        gh repo create $NAME --public --clone
-        cd $NAME/
-        git branch -M main
-        git push -u origin main
-    else
-        echo "Directory is not empty. Use the --existing flag to create a repository from existing files."
-        exit 1
-    fi
+    gh repo create $NAME --public --clone
+    cd $NAME/
+    git branch -M main
+    touch README.md
+    git add .
+    git commit -m "Initial commit"
+    git push -u origin main
 fi
